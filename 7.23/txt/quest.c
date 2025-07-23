@@ -146,7 +146,7 @@ int main(){
             token1=strtok_r(NULL,"\n",&saveptr1);
             num1++;
         }
-        for(int i=0; i<4; i++) {
+        for(int i=0; i<3; i++) {
 		    printf("%s\t", hang[i]);
 	    }
 	    printf("\n");
@@ -161,7 +161,7 @@ int main(){
         Admin *mnb2=NULL;
         char *token2;
         char *saveptr2;
-        char lie[5][100];
+        char lie[3][100];
         int num2=0;
         token2=strtok_r(data,"\n",&saveptr2);
         while(token2!=NULL){
@@ -203,13 +203,13 @@ int main(){
             token2=strtok_r(NULL,"\n",&saveptr2);
             num2++;
         }
-        for(int i=0;i<4;i++){
+        for(int i=0;i<3;i++){
             printf("%s\t",lie[i]);
         }
         printf("\n");
         Admin *p2=head2;
         while(p2!=NULL){
-            printf("%s\t%s\t%s\n",p2->account,p2->admin_name,p2->admin_password);
+            printf("%s  %s  %s\n",p2->account,p2->admin_name,p2->admin_password);
             p2=p2->next2;
         }
     }
