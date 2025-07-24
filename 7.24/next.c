@@ -34,7 +34,6 @@ int main(){
     scanf("%s",path);
     pfile=fopen(path,"r");
     if(pfile==NULL){
-        printf("open fail\n");
         return 0;
     }
     fseek(pfile,0,SEEK_END);
@@ -46,18 +45,17 @@ int main(){
     fclose(pfile);
 
 
-
+    int tim;
+    scanf("%d",&tim);
     
     Course *head1=NULL;
     Course *cur1=NULL;
-    char s[3]='\n';
-    char m[3]=',';
     char *token;
     char *saveptr;
     int index=0;
-    char order[5][100];
-    token=strtok_r(data,s,&saveptr);
-    if(length=0){
+    char order[4][100];
+    token=strtok_r(data,"\n",&saveptr);
+    if(tim==0){
         while(token!=NULL){
         char *maken;
         int x=0;
@@ -66,7 +64,7 @@ int main(){
             node=(Course*)malloc(sizeof(Course));
         }
         char *saveptr1;
-        maken=strtok_r(token,m,&saveptr1);
+        maken=strtok_r(token,",",&saveptr1);
         while(maken!=NULL){
             if(index==0){
                 strcpy(order[x],maken);
@@ -83,7 +81,7 @@ int main(){
                     }
                 }
             }
-            maken=strtok_r(NULL,m,&saveptr1);
+            maken=strtok_r(NULL,",",&saveptr1);
             x++;
         }
         if(index>0){
@@ -95,7 +93,7 @@ int main(){
                 cur1=cur1->next;
             }        
         }
-        token =strtok_r(NULL,s,&saveptr);
+        token =strtok_r(NULL,"\n",&saveptr);
         index++;
     }
     for(int i=0;i<4;i++){
@@ -107,7 +105,7 @@ int main(){
         p=p->next;
     }
 }
-
+if(tim!=0){
     user *head=NULL;
     user *cur=NULL;
     while(token!=NULL){
@@ -115,9 +113,9 @@ int main(){
         user *many=NULL;
         char *saveptr1;
         if(index>0){
-            many=(user*)malloc(sizeof(Course));
+            many=(user*)malloc(sizeof(user));
         }
-        char *maken=strtok_r(token,m,&saveptr1);
+        char *maken=strtok_r(token,",",&saveptr1);
         while(maken!=NULL){
             if(index==0){
                 strcpy(order[y],maken);
@@ -133,15 +131,42 @@ int main(){
                     else if(strcmp(order[y],"密码")==0){
                         strcpy(many->password,maken);
                     }else if(strcmp(order[y],"姓名")==0){
-                        strcpy(many->name[y],maken);
+                        strcpy(many->name,maken);
                     }
                 }
+            }
+            maken=strtok_r(NULL,",",&saveptr1);
+            y++;
         }
-
+        if(index>0){
+            if(head==NULL){
+                head=many;
+                cur=many;
+            }else{
+                cur->next=many;
+                cur=cur->next;
+            }
+            many->next=NULL;
+        }
+        token=strtok_r(NULL,"\n",&saveptr);
+        index++;
     }
-
-
-
+    for(int i=0;i<3;i++){
+        printf("%s",order[i]);
+    }
+    printf("\n");
+    user *p=head;
+    if(tim==1){
+    while(p!=NULL){
+        printf("%s,%s,%s,%s\n",p->account,p->password,p->name,p->identity);
+        p=p->next;
+    }
+    }else{
+        while(p!=NULL){
+        printf("%s,%s,%s,%s\n",p->account,p->password,p->name,p->identity);
+        p=p->next;
+    }
+}
+}
     return 0;
-
 }
