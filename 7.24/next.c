@@ -6,6 +6,8 @@ typedef struct cu {
     char course_name[100];
     char teacher_name[100];
     int max_student_num;
+    int num;
+    char name[20];
     struct cu *next;
 } Course;
 
@@ -15,11 +17,10 @@ struct Class{
     struct  Class *next1;
 };
 typedef struct User{
-    char admin_account[100];
-    char admin_password[20];
-    char student_account[100];
-    char student_password[20];
+    char account[100];
+    char password[20];
     char name[20];
+    char identity[10];
     int lesson;
     struct Class class;
     struct User *next;
@@ -44,18 +45,103 @@ int main(){
     data[length]='\0';
     fclose(pfile);
 
+
+
+    
+    Course *head1=NULL;
+    Course *cur1=NULL;
+    char s[3]='\n';
+    char m[3]=',';
     char *token;
     char *saveptr;
-    token=strtok_r(data,"\n",&saveptr);
-    while(token!=NULL){
+    int index=0;
+    char order[5][100];
+    token=strtok_r(data,s,&saveptr);
+    if(length=0){
+        while(token!=NULL){
         char *maken;
-        char *saveptr1;
-        maken=strtok_r(token,",",&saveptr1);
-        while(maken!=NULL){
-            printf("%s\n",maken);
-            maken=strtok_r(NULL,",",&saveptr1);
+        int x=0;
+        Course *node=NULL;
+        if (index>0){
+            node=(Course*)malloc(sizeof(Course));
         }
-        token =strtok_r(NULL,"\n",&saveptr);
+        char *saveptr1;
+        maken=strtok_r(token,m,&saveptr1);
+        while(maken!=NULL){
+            if(index==0){
+                strcpy(order[x],maken);
+            }else{
+                if(node!=NULL){
+                    if(strcmp(order[x],"课程编号")==0){
+                        strcpy(node->id,maken);
+                    }else if(strcmp(order[x],"课程名称")==0){
+                        strcpy(node->course_name,maken);
+                    }else if(strcmp(order[x],"教师")==0){
+                        strcpy(node->teacher_name,maken);
+                    }else if(strcmp(order[x],"最大容纳人数")==0){
+                        node->max_student_num=atoi(maken);
+                    }
+                }
+            }
+            maken=strtok_r(NULL,m,&saveptr1);
+            x++;
+        }
+        if(index>0){
+            if(head1==NULL){
+                head1=node;
+                cur1=node;
+            }else{
+                cur1->next=node;
+                cur1=cur1->next;
+            }        
+        }
+        token =strtok_r(NULL,s,&saveptr);
+        index++;
     }
+    for(int i=0;i<4;i++){
+        printf("%s;",order[i]);
+    }
+    Course *p=head1;
+    while(p!=NULL){
+        printf("%s,%s,%s,%d\n",p->id,p->course_name,p->teacher_name,p->max_student_num);
+        p=p->next;
+    }
+}
+
+    user *head=NULL;
+    user *cur=NULL;
+    while(token!=NULL){
+        int y=0;
+        user *many=NULL;
+        char *saveptr1;
+        if(index>0){
+            many=(user*)malloc(sizeof(Course));
+        }
+        char *maken=strtok_r(token,m,&saveptr1);
+        while(maken!=NULL){
+            if(index==0){
+                strcpy(order[y],maken);
+            }else{
+                if(many!=NULL){
+                    if(strcmp(order[y],"账号")==0){
+                        strcpy(many->account,maken);
+                        strcpy(many->identity,"管理员");
+                    }else if(strcmp(order[y],"学号")==0){
+                        strcpy(many->account,maken);
+                        strcpy(many->identity,"学生");
+                    }
+                    else if(strcmp(order[y],"密码")==0){
+                        strcpy(many->password,maken);
+                    }else if(strcmp(order[y],"姓名")==0){
+                        strcpy(many->name[y],maken);
+                    }
+                }
+        }
+
+    }
+
+
+
     return 0;
+
 }
