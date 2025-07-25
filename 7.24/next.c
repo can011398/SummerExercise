@@ -57,69 +57,69 @@ int main(){
     token=strtok_r(data,"\n",&saveptr);
     if(tim==0){
         while(token!=NULL){
-        char *maken;
-        int x=0;
-        Course *node=NULL;
-        if (index>0){
-            node=(Course*)malloc(sizeof(Course));
-        }
-        char *saveptr1;
-        maken=strtok_r(token,",",&saveptr1);
-        while(maken!=NULL){
-            if(index==0){
-                strcpy(order[x],maken);
-            }else{
-                if(node!=NULL){
-                    if(strcmp(order[x],"课程编号")==0){
-                        strcpy(node->id,maken);
-                    }else if(strcmp(order[x],"课程名称")==0){
-                        strcpy(node->course_name,maken);
-                    }else if(strcmp(order[x],"教师")==0){
-                        strcpy(node->teacher_name,maken);
-                    }else if(strcmp(order[x],"最大容纳人数")==0){
-                        node->max_student_num=atoi(maken);
+            char *maken;
+            int x=0;
+            Course *node=NULL;
+            if (index>0){
+                node=(Course*)malloc(sizeof(Course));
+            }
+            char *saveptr1;
+            maken=strtok_r(token,",",&saveptr1);
+            while(maken!=NULL){
+                if(index==0){
+                    strcpy(order[x],maken);
+                }else{
+                    if(node!=NULL){
+                        if(strcmp(order[x],"课程编号")==0){
+                            strcpy(node->id,maken);
+                        }else if(strcmp(order[x],"课程名称")==0){
+                            strcpy(node->course_name,maken);
+                        }else if(strcmp(order[x],"教师")==0){
+                            strcpy(node->teacher_name,maken);
+                        }else if(strcmp(order[x],"最大容纳人数")==0){
+                            node->max_student_num=atoi(maken);
+                        }
                     }
                 }
+                maken=strtok_r(NULL,",",&saveptr1);
+                x++;
             }
-            maken=strtok_r(NULL,",",&saveptr1);
-            x++;
+            if(index>0){
+                if(head1==NULL){
+                    head1=node;
+                    cur1=node;
+                }else{
+                    cur1->next=node;
+                    cur1=cur1->next;
+                }        
+            }
+            token =strtok_r(NULL,"\n",&saveptr);
+            index++;
         }
-        if(index>0){
-            if(head1==NULL){
-                head1=node;
-                cur1=node;
-            }else{
-                cur1->next=node;
-                cur1=cur1->next;
-            }        
+        for(int i=0;i<4;i++){
+            printf("%s;",order[i]);
         }
-        token =strtok_r(NULL,"\n",&saveptr);
-        index++;
-    }
-    for(int i=0;i<4;i++){
-        printf("%s;",order[i]);
-    }
-    Course *p=head1;
-    while(p!=NULL){
-        printf("%s,%s,%s,%d\n",p->id,p->course_name,p->teacher_name,p->max_student_num);
-        p=p->next;
-    }
-}
-if(tim!=0){
-    user *head=NULL;
-    user *cur=NULL;
-    while(token!=NULL){
-        int y=0;
-        user *many=NULL;
-        char *saveptr1;
-        if(index>0){
-            many=(user*)malloc(sizeof(user));
+        Course *p=head1;
+        while(p!=NULL){
+            printf("%s,%s,%s,%d\n",p->id,p->course_name,p->teacher_name,p->max_student_num);
+            p=p->next;
         }
-        char *maken=strtok_r(token,",",&saveptr1);
-        while(maken!=NULL){
-            if(index==0){
-                strcpy(order[y],maken);
-            }else{
+    }
+    if(tim!=0){
+        user *head=NULL;
+        user *cur=NULL;
+        while(token!=NULL){
+            int y=0;
+            user *many=NULL;
+            char *saveptr1;
+            if(index>0){
+                many=(user*)malloc(sizeof(user));
+            }
+            char *maken=strtok_r(token,",",&saveptr1);
+            while(maken!=NULL){
+                if(index==0){
+                    strcpy(order[y],maken);
+                }else{
                 if(many!=NULL){
                     if(strcmp(order[y],"账号")==0){
                         strcpy(many->account,maken);
