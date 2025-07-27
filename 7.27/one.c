@@ -8,29 +8,40 @@
 #define ADMIN_FILE "./admin.txt"
 
 
-typedef struct User{
+typedef struct ids {
+    char id[20];
+    struct ids *next;
+} IDS;
+
+typedef struct user{
     char account[20];
     char password[20];
-    char identity;
-    struct User *next;
-} user;
+    char id[20];
+    struct user *next;
+    int course_num;
+    char course_name[20];
+    IDS *courses;
+} User;
 
-typedef struct Course{
+typedef struct course{
     char course_name[20];
     char course_teacher[20];
     char id[20];
-    char max_student_num[20];
-    struct Course *next
-} course;
+    int max_student_num;
+    int course_person;
+    char choose_id[400];
+    struct course *next;
+    IDS *students;
+} Course;
 
-int main(){
+
+
+int readfile (char *path, char *data){
     FILE *pfile;
-    char *data;
     int length;
-    char path[200];
     pfile = (path,"r");
     if(pfile==NULL){
-        return NULL;
+        return 1;
     }
     fseek(pfile, 0, SEEK_END);
     length=ftell(pfile);
@@ -39,27 +50,26 @@ int main(){
     length = fread(data,1,length,pfile);
     data[length]='\0';
     fclose(pfile);
-    printf("%s",data);
     return 0;
+    
 }
 
 
-int main(){
-    course *head=NULL;
-    course *cur=NULL;
+int init(char *path,char *data){
+    Course *head=NULL;
+    Course *cur=NULL;
     char *order[4][100];
     char *token;
     char *saveptr;
-    char *path;
     int index=0;
     token=strtok_r(path,"\n",&saveptr);
     while(token!=NULL){
         char *maken;
         char *saveptr1;
         int x=0;
-        course *node=NULL;
+        Course *node=NULL;
         if(index>0){
-            node=(course*)malloc(sizeof(course));
+            node=(Course*)malloc(sizeof(Course));
         }
         maken=(token,",",&saveptr1);
         while(maken!=NULL){
@@ -97,7 +107,7 @@ int main(){
     for(int i=0;i<4;i++){
         printf("%s",order[i]);
     }
-    course *p = head;
+    Course *p = head;
     while(p!=NULL){
         printf("%s,%s,%s,%s\n",p->course_name,p->course_teacher,p->id,p->max_student_num);
         p=p->next;
@@ -113,5 +123,5 @@ int mian(){
     scanf("%s",&a[100]);
     printf("请输入密码");
     scanf("%s",&b[100]);
-    
+     
 }
