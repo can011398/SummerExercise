@@ -1,6 +1,15 @@
-#include <stdio.h>
+ #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#define COURSE_FILE "./course.txt"
+#define STUDENT_FILE "./student.txt"
+#define ADMIN_FILE "./admin.txt"
+
+typedef struct ids{
+    char id[20];
+    struct ids *next;
+}IDS;
 
 typedef struct user{
     char account[20];
@@ -12,7 +21,6 @@ typedef struct user{
     IDS *course;
 } User;
 
-
 typedef struct course{
     char id[20];
     char course_name[100];
@@ -23,47 +31,43 @@ typedef struct course{
     IDS *students;
 } Course;
 
-typedef struct ids{
-    char id[20];
-    struct ids *next;
-}IDS;
-
-
-int READFILE(char *path,char **data){
+char *READFILE(char *path){
     FILE *pfile;
+    char *data;
     long length;
     pfile = fopen(path,"r");
     if (pfile == NULL){
-        return 1;
+        return NULL;
     }
     fseek(pfile,0,SEEK_END);
     length = ftell(pfile);
-    *data = (char *)malloc((length+1)*sizeof(char));
+    data = (char *)malloc((length+1)*sizeof(char));
     rewind(pfile);
-    length = fread(*data,1,length,pfile);
-    (*data)[length] = '\0';
-    fcolse(pfile);
-    return 0;
+    length = fread(data,1,length,pfile);
+    data[length] = '\0';
+    fclose(pfile);
+    return data;
 }
 
-char  *parse_couse(char **data,char **content){
+
+Course *parse_course(char *data){
     char order[4][100];
     Course *head=NULL;
     Course *cur=NULL;
     char *token;
     char *saveptr;
     int index = 0;
-    token = strtok_r(*data,'\n',&saveptr);
+    token = strtok_r(data,"\n",&saveptr);
     while(token!=NULL){
         char *maken;
         char *saveptr1;
         int x=0;
         Course *node = NULL;
         if(index>0){
-            node = (Course*)malloc(sizeof(char));
+            node = (Course*)malloc(sizeof(Course));
             node->next=NULL;
         }
-        maken=(token,',',&saveptr1);
+        maken=strtok_r(token,",",&saveptr1);
         while(maken!=NULL){
             if(index==0){
                 strcpy(order[x],maken);
@@ -71,11 +75,11 @@ char  *parse_couse(char **data,char **content){
                 if(node!=NULL){
                     if(strcmp(order[x],"课程编号")==0){
                         strcpy(node->id,maken);
-                    }else if(strcmp(order[x],"任课教师")){
+                    }else if(strcmp(order[x],"任课教师")==0){
                         strcpy(node->teacher_name,maken);
-                    }else if(strcmp(order[x],"课程名称")){
+                    }else if(strcmp(order[x],"课程名称")==0){
                         strcpy(node->course_name,maken);
-                    }else if(strcmp(order[x],"最大容纳人数")){
+                    }else if(strcmp(order[x],"最大容纳人数")==0){
                         node->max_student_num=atoi(maken);
                     }
                 }
@@ -84,7 +88,7 @@ char  *parse_couse(char **data,char **content){
             x++;
         }
         if(node!=NULL){
-            if(head = NULL){
+            if(head == NULL){
                 head = node;
                 cur = node;
             }else{
@@ -96,22 +100,21 @@ char  *parse_couse(char **data,char **content){
         token = strtok_r(NULL,"\n",&saveptr);
         index++;       
     }
-    content = head;
-    return content;
+    return head;
 }
 
 
 
-char *parse_user(char **content,char **data){
-    User *head = NULL;
+User *parse_user(char *data){
+    User *head = NULL; 
     User *cur = NULL;
     char *token;
     char *saveptr;
-    char order[3][100];
+    char order[4][100];
     int index = 0;
     token = strtok_r(data,"\n",&saveptr);
     while(token!=NULL){
-        User*node = NULL;
+        User *node = NULL;
         if(index>0){
             node=(User*)malloc(sizeof(User));
             node->next=NULL;
@@ -127,14 +130,16 @@ char *parse_user(char **content,char **data){
                 if(node!=NULL){
                     if(strcmp(order[x],"学号")==0){
                         strcpy(node->account,maken);
-                        strcpy(node->is_admin,'1');
+                        node->is_admin = 1;
                     }else if(strcmp(order[x],"密码")==0){
                         strcpy(node->password,maken);
                     }else if(strcmp(order[x],"编号")==0){
                         strcpy(node->id,maken);
                     }else if(strcmp(order[x],"账号")==0){
                         strcpy(node->account,maken);
-                        strcpy(node->is_admin,'0');
+                        node->is_admin = 0;
+                    }else if(strcmp(order[x],"ID")==0){
+                        strcpy(node->id,maken);
                     }
                 }
             }
@@ -150,10 +155,10 @@ char *parse_user(char **content,char **data){
                 cur=node;
             }
         }
-        token=strtok_r(NULL,"\n",&saveptr1);
+        token=strtok_r(NULL,"\n",&saveptr);
         index++;
-    }content=head;
-    return content;
+    }
+    return head;
 }
 
 
@@ -166,24 +171,52 @@ int function_choose(){
     return index;
 }
 
-int init(char **path,char **data){
+int init(Course **course_head,User **user_head){
     printf("begin read file\n");
     char *content;
-    READFILE(path,*data);
-    par_course(*data,*content);
+    content=READFILE(COURSE_FILE);
+    *course_head=parse_course(content);
     free(content);
-    READFILE(path,*data);
-    parse_user(*content,*data);
+    content=READFILE(STUDENT_FILE);
+    User *student_head=parse_user(content);
+    free(content);
+    content=READFILE(ADMIN_FILE);
+    User *admin_head=parse_user(content);
+    User *tail=student_head;
+    while(tail->next!=NULL){
+        tail=tail->next;
+    }
+    tail->next = admin_head;
+    *user_head=student_head;
     return 0;
+
 }
 
 
-int main(){
-    int a=function_choose;
-    char *path;
-    char *data;
-    scanf("%s",&path);
-    if(a==1){
-        init(*path,*data);
+int main() {
+    Course *course_head = NULL;
+    User *user_head = NULL;
+    // int num = 3;
+    while(1) {
+        int choice = function_choose();
+        if(choice == 1) {
+            init(&course_head, &user_head);
+        } else if(choice == 2) {
+            Course *cur = course_head;
+            printf("------\nCourse Info:\n");
+            while(cur != NULL) {
+                printf("ID: %s, Name: %s, Teacher: %s, Max Students: %d\n", 
+                       cur->id, cur->course_name, cur->teacher_name, cur->max_student_num);
+                cur = cur->next;
+            }
+            printf("------\nUser Info:\n");
+            User *user_cur = user_head;
+            while(user_cur != NULL) {
+                printf("ID: %s, Name: %s, Password: %s, Is Admin: %d\n", 
+                       user_cur->id, user_cur->account, user_cur->password, user_cur->is_admin);
+                user_cur = user_cur->next;  
+            }
+        }
     }
+    return 0;
 }
